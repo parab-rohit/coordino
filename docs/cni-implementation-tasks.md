@@ -8,9 +8,9 @@ Companion to `cni-architecture-design.md`. Organized into phases; each phase sho
 
 - [ ] **0.1** Stand up dev cluster(s): a small kind/k3d cluster for fast iteration, and a scale-test cluster (target: subset large enough to extrapolate to 5,000 nodes, e.g. 200–500 nodes)
 - [ ] **0.2** Pin minimum supported kernel version (BTF/CO-RE requirement) and document in repo
-- [ ] **0.3** Set up Go module structure per package layout (§13 of design doc)
+- [x] **0.3** Set up Go module structure per package layout (§13 of design doc)
 - [ ] **0.4** Set up CI: lint, unit tests, `go vet`, eBPF program compile check (`bpf2go`)
-- [ ] **0.5** Define CRD schemas (`IPPool`, `NodeConfig`, `Identity`, `PolicyIR`, `NodeIsolationPolicy`) and generate deepcopy/client code
+- [x] **0.5** Define CRD schemas (`IPPool`, `NodeConfig`, `Identity`, `PolicyIR`, `NodeIsolationPolicy`) and generate deepcopy/client code
 - [ ] **0.6** Set up local Prometheus + Grafana + Jaeger/Tempo stack for dev observability
 
 ---
@@ -20,23 +20,23 @@ Companion to `cni-architecture-design.md`. Organized into phases; each phase sho
 Goal: pods get IPs and can talk to each other. No NetworkPolicy, no WireGuard yet.
 
 ### 1.1 CNI Binary
-- [ ] Implement CNI spec ADD/DEL/CHECK handlers
+- [x] Implement CNI spec ADD/DEL/CHECK handlers
 - [ ] Implement veth pair creation and netns wiring (netlink, no shell-out)
-- [ ] Implement Unix domain socket client to node agent
+- [x] Implement Unix domain socket client to node agent
 - [ ] Static binary build, verify <30ms execution time in isolation
 
 ### 1.2 Node Agent — IPAM
-- [ ] Implement in-memory bitmap allocator for a /24 block
-- [ ] Implement Unix domain socket server (CNI binary ↔ agent protocol)
-- [ ] Implement local IP allocation/release on ADD/DEL
-- [ ] Implement periodic reconciliation sweep (orphaned IP GC, every 60s)
+- [x] Implement in-memory bitmap allocator for a /24 block
+- [x] Implement Unix domain socket server (CNI binary ↔ agent protocol)
+- [x] Implement local IP allocation/release on ADD/DEL
+- [x] Implement periodic reconciliation sweep (orphaned IP GC, every 60s)
 - [ ] Implement local disk checkpoint (BadgerDB) of allocation state
 
 ### 1.3 Controller — IPAM
 - [ ] Implement leader election (controller-runtime)
-- [ ] Implement node registration watch → CIDR block assignment
+- [x] Implement node registration watch → CIDR block assignment
 - [ ] Implement `IPPool`/`NodeConfig` CRD reconciliation loop
-- [ ] Implement block overflow/secondary-block-request handling
+- [x] Implement block overflow/secondary-block-request handling
 
 ### 1.4 Routing (baseline)
 - [ ] Implement BGP-based native routing backend (e.g. via GoBGP or Bird integration)
@@ -68,13 +68,13 @@ Goal: replace/augment routing with eBPF programs; establish identity-based model
 - [ ] Implement map entry cleanup on CNI DEL
 
 ### 2.3 Identity Resolution
-- [ ] Implement label-set hashing → identity ID assignment (controller-side)
-- [ ] Implement identity ref-counting (reuse across pods with identical labels)
+- [x] Implement label-set hashing → identity ID assignment (controller-side)
+- [x] Implement identity ref-counting (reuse across pods with identical labels)
 - [ ] Implement `Identity` CRD watch on node agent (filtered to node's present identities)
 - [ ] Implement incremental (not full-recompute) selector resolution cache
 
 ### 2.4 iptables Fallback
-- [ ] Implement iptables-based data plane behind same internal interface
+- [x] Implement iptables-based data plane behind same internal interface
 - [ ] Implement kernel feature detection → auto-select eBPF vs iptables at agent startup
 
 ### 2.5 Phase 2 Exit Criteria
@@ -93,7 +93,7 @@ Goal: replace/augment routing with eBPF programs; establish identity-based model
 - [ ] Implement per-node IR filtering/publication (`PolicyIR` CRD)
 
 ### 3.2 Node Agent — Policy Enforcement
-- [ ] Implement IR → eBPF policy map compiler (`identity-pair → verdict`)
+- [x] Implement IR → eBPF policy map compiler (`identity-pair → verdict`)
 - [ ] Implement policy tiering: `NodeIsolationPolicy` > platform-mandated > tenant policy
 - [ ] Implement default-deny/allow posture, verify consistent across agent restart
 - [ ] Implement DNS and monitoring-scrape platform-mandated allow rules
