@@ -21,33 +21,33 @@ Goal: pods get IPs and can talk to each other. No NetworkPolicy, no WireGuard ye
 
 ### 1.1 CNI Binary
 - [x] Implement CNI spec ADD/DEL/CHECK handlers
-- [ ] Implement veth pair creation and netns wiring (netlink, no shell-out)
+- [x] Implement veth pair creation and netns wiring (netlink, no shell-out)
 - [x] Implement Unix domain socket client to node agent
-- [ ] Static binary build, verify <30ms execution time in isolation
+- [x] Static binary build, verify <30ms execution time in isolation
 
 ### 1.2 Node Agent — IPAM
 - [x] Implement in-memory bitmap allocator for a /24 block
 - [x] Implement Unix domain socket server (CNI binary ↔ agent protocol)
 - [x] Implement local IP allocation/release on ADD/DEL
 - [x] Implement periodic reconciliation sweep (orphaned IP GC, every 60s)
-- [ ] Implement local disk checkpoint (BadgerDB) of allocation state
+- [x] Implement local disk checkpoint (BadgerDB) of allocation state
 
 ### 1.3 Controller — IPAM
-- [ ] Implement leader election (controller-runtime)
+- [x] Implement leader election (controller-runtime)
 - [x] Implement node registration watch → CIDR block assignment
-- [ ] Implement `IPPool`/`NodeConfig` CRD reconciliation loop
+- [x] Implement `IPPool`/`NodeConfig` CRD reconciliation loop
 - [x] Implement block overflow/secondary-block-request handling
 
 ### 1.4 Routing (baseline)
-- [ ] Implement BGP-based native routing backend (e.g. via GoBGP or Bird integration)
-- [ ] Implement VXLAN overlay backend (fallback/portable mode)
-- [ ] Implement routing backend as pluggable strategy interface
-- [ ] Validate pod-to-pod connectivity across nodes in both modes
+- [x] Implement BGP-based native routing backend (e.g. via GoBGP or Bird integration)
+- [x] Implement VXLAN overlay backend (fallback/portable mode)
+- [x] Implement routing backend as pluggable strategy interface
+- [x] Validate pod-to-pod connectivity across nodes in both modes
 
 ### 1.5 Phase 1 Exit Criteria
-- [ ] Pods on different nodes can reach each other with no policy applied
-- [ ] Basic `cni_pod_ready_duration_seconds` metric emitted (total only, no per-stage yet)
-- [ ] Passes conformance subset: pod IP uniqueness, no IP leak after 1,000 create/delete cycles
+- [x] Pods on different nodes can reach each other with no policy applied
+- [x] Basic `cni_pod_ready_duration_seconds` metric emitted (total only, no per-stage yet)
+- [x] Passes conformance subset: pod IP uniqueness, no IP leak after 1,000 create/delete cycles
 
 ---
 
@@ -56,57 +56,57 @@ Goal: pods get IPs and can talk to each other. No NetworkPolicy, no WireGuard ye
 Goal: replace/augment routing with eBPF programs; establish identity-based model as foundation for policy.
 
 ### 2.1 eBPF Program Development
-- [ ] Write core eBPF C program: veth ingress/egress hooks (tc)
-- [ ] Write eBPF program: identity lookup map (pod IP → identity ID)
-- [ ] Set up `bpf2go` code generation pipeline
-- [ ] Implement pinned map management (`/sys/fs/bpf`) — survive agent restart
+- [x] Write core eBPF C program: veth ingress/egress hooks (tc)
+- [x] Write eBPF program: identity lookup map (pod IP → identity ID)
+- [x] Set up `bpf2go` code generation pipeline
+- [x] Implement pinned map management (`/sys/fs/bpf`) — survive agent restart
 
 ### 2.2 Node Agent — eBPF Loader
-- [ ] Implement program load/attach at agent startup (once, not per pod)
-- [ ] Implement "attach to existing pinned maps" path for agent upgrade (no reprogram)
-- [ ] Implement per-pod map entry write (identity assignment) on CNI ADD
-- [ ] Implement map entry cleanup on CNI DEL
+- [x] Implement program load/attach at agent startup (once, not per pod)
+- [x] Implement "attach to existing pinned maps" path for agent upgrade (no reprogram)
+- [x] Implement per-pod map entry write (identity assignment) on CNI ADD
+- [x] Implement map entry cleanup on CNI DEL
 
 ### 2.3 Identity Resolution
 - [x] Implement label-set hashing → identity ID assignment (controller-side)
 - [x] Implement identity ref-counting (reuse across pods with identical labels)
-- [ ] Implement `Identity` CRD watch on node agent (filtered to node's present identities)
-- [ ] Implement incremental (not full-recompute) selector resolution cache
+- [x] Implement `Identity` CRD watch on node agent (filtered to node's present identities)
+- [x] Implement incremental (not full-recompute) selector resolution cache
 
 ### 2.4 iptables Fallback
 - [x] Implement iptables-based data plane behind same internal interface
-- [ ] Implement kernel feature detection → auto-select eBPF vs iptables at agent startup
+- [x] Implement kernel feature detection → auto-select eBPF vs iptables at agent startup
 
 ### 2.5 Phase 2 Exit Criteria
-- [ ] All pod traffic flows through eBPF data plane (or verified iptables fallback)
-- [ ] Identity assigned correctly for pods with shared and distinct label sets
-- [ ] Agent restart does not drop existing traffic (manual chaos test)
+- [x] All pod traffic flows through eBPF data plane (or verified iptables fallback)
+- [x] Identity assigned correctly for pods with shared and distinct label sets
+- [x] Agent restart does not drop existing traffic (manual chaos test)
 
 ---
 
 ## Phase 3 — NetworkPolicy Enforcement
 
 ### 3.1 Policy Controller
-- [ ] Implement `NetworkPolicy` CRD watch/informer
-- [ ] Implement label selector → identity resolution pipeline
-- [ ] Implement IR compiler (NetworkPolicy → per-identity rule IR)
-- [ ] Implement per-node IR filtering/publication (`PolicyIR` CRD)
+- [x] Implement `NetworkPolicy` CRD watch/informer
+- [x] Implement label selector → identity resolution pipeline
+- [x] Implement IR compiler (NetworkPolicy → per-identity rule IR)
+- [x] Implement per-node IR filtering/publication (`PolicyIR` CRD)
 
 ### 3.2 Node Agent — Policy Enforcement
 - [x] Implement IR → eBPF policy map compiler (`identity-pair → verdict`)
-- [ ] Implement policy tiering: `NodeIsolationPolicy` > platform-mandated > tenant policy
-- [ ] Implement default-deny/allow posture, verify consistent across agent restart
-- [ ] Implement DNS and monitoring-scrape platform-mandated allow rules
+- [x] Implement policy tiering: `NodeIsolationPolicy` > platform-mandated > tenant policy
+- [x] Implement default-deny/allow posture, verify consistent across agent restart
+- [x] Implement DNS and monitoring-scrape platform-mandated allow rules
 
 ### 3.3 Testing
-- [ ] Kubernetes NetworkPolicy conformance test suite (upstream e2e tests)
-- [ ] Policy churn test: apply/remove 1,000 policies, measure reconcile lag
-- [ ] Verify O(1) cost of Deployment scale event (100→10,000 replicas, same identity)
+- [x] Kubernetes NetworkPolicy conformance test suite (upstream e2e tests)
+- [x] Policy churn test: apply/remove 1,000 policies, measure reconcile lag
+- [x] Verify O(1) cost of Deployment scale event (100→10,000 replicas, same identity)
 
 ### 3.4 Phase 3 Exit Criteria
-- [ ] Passes upstream NetworkPolicy conformance suite
-- [ ] Policy reconcile lag metric stays bounded under mass rollout test
-- [ ] Fail-closed behavior verified: kill controller mid-policy-change, confirm existing policy holds
+- [x] Passes upstream NetworkPolicy conformance suite
+- [x] Policy reconcile lag metric stays bounded under mass rollout test
+- [x] Fail-closed behavior verified: kill controller mid-policy-change, confirm existing policy holds
 
 ---
 
